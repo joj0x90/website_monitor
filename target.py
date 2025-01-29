@@ -11,6 +11,7 @@ class target:
         def __init__(self, host, notification):
                 self.host = host
                 self.notification = notification
+                self.already_notified = False
 
         def check_status(self):
                 try:

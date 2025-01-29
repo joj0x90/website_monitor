@@ -12,13 +12,6 @@ You just have to adapt the config-file according to your needs. \
 The config file is a basic json-file with following structure: 
 ``` json
 {
-  "sender_mail": {
-    "mail_address": "noreply@domain.com",
-    "mail_user": "<user>",
-    "mail_pass": "<password>",
-    "mail_server": "mail.server.com",
-    "mail_port": 1234
-  },
   "targets": [
     {
       "url": "https://example.com/",
@@ -35,18 +28,31 @@ The config file is a basic json-file with following structure:
   ]
 }
 ```
-the first structure contains your mail-server data:
+
+The structure is just a list of targets, which have the following parameters:
+* **url:** the full website's URL
+* **status:** the expected http status code (in case you want to check, if a website returns something other than boring 200)
+* **notification_type:** currently only 'email' or 'slack' exist
+* **method:** for email its the email-adress under which you want to receive the information, for slack its the App's webhook.
+
+App-specifics are managed using a .env file, which is structured like this:
+``` .env
+APP_NAME="Website-Monitor"
+APP_VERSION="0.1"
+
+# smtp email server
+MAIL_ADDRESS="noreply@domain.com"
+MAIL_USER="<user>"
+MAIL_PASSWORD="<password>"
+MAIL_SERVER="mail.server.com"
+SMTP_PORT=1234
+```
+this specifies some basic App-data and the smtp-mail account used for sending email-notifications:
 * **mail_address:** your mail-address (will be shown as sender in the mail)
 * **mail_user:** The username of your mailserver
 * **mail_pass:** The password for your mail_user
 * **mail_server:** Your mail-server's outgoing smtp address
 * **mail_port:** the mail-server's smtp port (currently only unencrypted) 
-
-The next structure is just a list of targets, which have the following parameters:
-* **url:** the full website's URL
-* **status:** the expected http status code (in case you want to check, if a website returns something other than boring 200)
-* **notification_type:** currently only 'email' or 'slack' exist
-* **method:** for email its the email-adress under which you want to receive the information, for slack its the App's webhook.
 
 ## Further development
 I would really like to add a webserver with a simple GUI possibly using flask, to make it easier to manage the config file and see, which targets are currently in which state. \

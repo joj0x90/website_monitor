@@ -1,4 +1,5 @@
-import json
+import json, os
+from dotenv import load_dotenv
 
 import target
 import mailer
@@ -34,16 +35,15 @@ def parse(file_path):
                 return targets
 
 def parse_mail_sender(json_file):
-    with open(json_file, 'r') as file:
-        data = json.load(file)
+        # Load the .env file
+        load_dotenv()
 
-    sender_data = data.get("sender_mail", {})
-    mail_sender_obj = mailer.mailer(
-        address=sender_data.get("mail_address", ""),
-        user=sender_data.get("mail_user", ""),
-        password=sender_data.get("mail_pass", ""),
-        server=sender_data.get("mail_server", ""),
-        port=sender_data.get("mail_port", 0),
-    )
+        mail_sender_obj = mailer.mailer(
+                address=os.getenv("MAIL_ADDRESS", ""),
+                user=os.getenv("MAIL_USER", ""),
+                password=os.getenv("MAIL_PASSWORD", ""),
+                server=os.getenv("MAIL_SERVER", ""),
+                port=os.getenv("SMTP_PORT", 0),
+        )
 
-    return mail_sender_obj
+        return mail_sender_obj

@@ -3,9 +3,14 @@ from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
 import mailer
 import socket
+from dotenv import load_dotenv
+import os
 
 class notifications:
         def __init__(self, notifier = '', notification_type = '', method = ''):
+                # Load the .env file
+                load_dotenv()
+
                 if notification_type != '' and method != '':
                         self.notifyMe = True
                         self.notifier = notifier
@@ -29,6 +34,18 @@ class notifications:
         def sendSlackNotification(self):
                 # prototype function for sending slack notifications
                 return
+        
+        def is_ssl_port(self, smtp_server, port):
+                try:
+                        # Attempt to establish an SSL connection
+                        with smtplib.SMTP_SSL(smtp_server, port, timeout=10) as server:
+                                server.noop()  # Send a NOOP command to test the connection
+                        return True  # Connection successful
+                except (smtplib.SMTPException, ConnectionRefusedError, TimeoutError):
+                        return False  # Connection failed
+                except Exception as e:
+                        return False    # general error
+
 
         def sendMail(self, url, status):
                 # early return in case the mailer is not setup
@@ -40,8 +57,12 @@ class notifications:
                 receiver_email = self.method
 
                 # Create the email
-                subject = "Subject: Your service is down!"
-                body = "The Service under: " + url + " is currently unavailable!\n\nthe returned http-status-code is: " +  str(status) + ")"
+                App_name = os.getenv("APP_NAME", "Website-monitor")
+                App_version = os.getenv("APP_VERSION", "0.1")
+
+                subject = "[" + App_name + "]: Your service is down!"
+                body = "The Service under: " + url + " is currently unavailable!\nthe returned http-status-code is: " +  str(status) + ")\n\n"
+                body += "This Service was provided by {App_name} v{App_version}"
 
                 # Create MIME object
                 message = MIMEMultipart()
@@ -53,11 +74,20 @@ class notifications:
                 message.attach(MIMEText(body, "plain"))
 
                 try:
-                        # Connect to the mail server
-                        with smtplib.SMTP(self.notifier.server, self.notifier.port, timeout=30) as server:
-                                server.starttls()  # Secure the connection
-                                server.login(self.notifier.user, self.notifier.password)  # Login to your email
-                                server.sendmail(sender_email, receiver_email, message.as_string())
+                        smtp_server = self.notifier.server
+                        smtp_port = self.notifier.port
+                        if self.is_ssl_port(smtp_server, smtp_port):
+                                # Connect to the mail server via ssl
+                                with smtplib.SMTP_SSL(smtp_server, smtp_port, timeout=30) as server:
+                                        server.login(self.notifier.user, self.notifier.password)
+                                        server.sendmail(sender_email, receiver_email, message.as_string())
+                                        print("ssl encrypted notification send to: " + receiver_email)
+                        else:
+                                with smtplib.SMTP(smtp_server, smtp_port) as server:
+                                        server.starttls()
+                                        server.login(self.notifier.user, self.notifier.password)
+                                        server.sendmail(sender_email, receiver_email, message.as_string())
+                                        print("notification send to: " + receiver_email)
                 except (smtplib.SMTPException, socket.timeout) as e:
                         print(f"Failed to send email: {e}")
 

@@ -15,7 +15,11 @@ def check_targets(target_list):
                         target.print_target()
                         print(correct)
                 if(not(correct)):
-                        target.notification.notify(target.host.url, status)
+                        if not(target.already_notified):
+                                target.already_notified = True
+                                target.notification.notify(target.host.url, status)
+                        else:
+                                print("already notified user")
 
         threading.Timer(wait_seconds, check_targets, args=[target_list]).start()
 
