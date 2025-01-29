@@ -6,6 +6,7 @@ Additionally you can specify a notification per email or slack for any website, 
 ## used python-packages
 You have to install the following packages, to run the application:
 * requests ```pip install requests```
++ dotenv ```pip install python-dotenv```
 
 ## Config-file
 You just have to adapt the config-file according to your needs. \
