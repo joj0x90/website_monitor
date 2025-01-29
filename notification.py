@@ -2,6 +2,7 @@ import smtplib
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
 import mailer
+import socket
 
 class notifications:
         def __init__(self, notifier = '', notification_type = '', method = ''):
@@ -17,7 +18,6 @@ class notifications:
                         self.method = ''
         
         def notify(self, url, actual_output):
-                print ("sending notification")
                 if self.notifyMe:
                         if self.notification_type == 'email':
                                 self.sendMail(url, actual_output)
@@ -38,11 +38,10 @@ class notifications:
                 # Email details
                 sender_email = self.notifier.address
                 receiver_email = self.method
-                password = self.notifier.password
 
                 # Create the email
                 subject = "Subject: Your service is down!"
-                body = "The Service under: " + url + " is currently unavailable!\n (the returned http-status-code is: " +  str(status) + ")"
+                body = "The Service under: " + url + " is currently unavailable!\n\nthe returned http-status-code is: " +  str(status) + ")"
 
                 # Create MIME object
                 message = MIMEMultipart()
@@ -55,10 +54,10 @@ class notifications:
 
                 try:
                         # Connect to the mail server
-                        with smtplib.SMTP(self.notifier.server, self.notifier.port) as server:
+                        with smtplib.SMTP(self.notifier.server, self.notifier.port, timeout=30) as server:
                                 server.starttls()  # Secure the connection
-                                server.login(sender_email, password)  # Login to your email
+                                server.login(self.notifier.user, self.notifier.password)  # Login to your email
                                 server.sendmail(sender_email, receiver_email, message.as_string())
-                                print("Email sent successfully!")
-                except Exception as e:
-                        print(f"Error: {e}")
+                except (smtplib.SMTPException, socket.timeout) as e:
+                        print(f"Failed to send email: {e}")
+

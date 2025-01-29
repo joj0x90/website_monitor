@@ -13,10 +13,10 @@ The config file is a basic json-file with following structure:
 ``` json
 {
   "sender_mail": {
-    "mail_address": "noreply@domain.de",
+    "mail_address": "noreply@domain.com",
     "mail_user": "<user>",
     "mail_pass": "<password>",
-    "mail_server": "mail.server.de",
+    "mail_server": "mail.server.com",
     "mail_port": 1234
   },
   "targets": [
@@ -35,7 +35,14 @@ The config file is a basic json-file with following structure:
   ]
 }
 ```
-The structure is just a list of targets, which have the following parameters: \
+the first structure contains your mail-server data:
+* **mail_address:** your mail-address (will be shown as sender in the mail)
+* **mail_user:** The username of your mailserver
+* **mail_pass:** The password for your mail_user
+* **mail_server:** Your mail-server's outgoing smtp address
+* **mail_port:** the mail-server's smtp port (currently only unencrypted) 
+
+The next structure is just a list of targets, which have the following parameters:
 * **url:** the full website's URL
 * **status:** the expected http status code (in case you want to check, if a website returns something other than boring 200)
 * **notification_type:** currently only 'email' or 'slack' exist
