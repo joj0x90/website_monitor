@@ -1,1 +1,46 @@
 # website_monitor
+
+This is a simple monitoring system for checking the http-return code of any website. \
+Additionally you can specify a notification per email or slack for any website, so that you receive a message, when a specific website is unreachable.
+
+## used python-packages
+You have to install the following packages, to run the application:
+* requests ```pip install requests```
+
+## Config-file
+You just have to adapt the config-file according to your needs. \
+The config file is a basic json-file with following structure: 
+``` json
+{
+  "sender_mail": {
+    "mail_address": "noreply@domain.de",
+    "mail_user": "<user>",
+    "mail_pass": "<password>",
+    "mail_server": "mail.server.de",
+    "mail_port": 1234
+  },
+  "targets": [
+    {
+      "url": "https://example.com/",
+      "status": 200,
+      "notification-type": "email",
+      "method": "user@company.com"
+    },
+    {
+      "url": "https://test.example.com/",
+      "status": 200,
+      "notification-type": "slack",
+      "method": "<WIP>"
+    }
+  ]
+}
+```
+The structure is just a list of targets, which have the following parameters: \
+* **url:** the full website's URL
+* **status:** the expected http status code (in case you want to check, if a website returns something other than boring 200)
+* **notification_type:** currently only 'email' or 'slack' exist
+* **method:** for email its the email-adress under which you want to receive the information, for slack its the App's webhook.
+
+## Further development
+I would really like to add a webserver with a simple GUI possibly using flask, to make it easier to manage the config file and see, which targets are currently in which state. \
+I would like to add a timer, that the websites will be pinged once a minute and only if a website does not have the expected return type for three rounds (minutes) to then send the notification, in case you have network issues at the moment of the first request.
