@@ -6,6 +6,7 @@ on:
       - main
     paths:
       - '.env'
+  workflow_dispatch:
 
 jobs:
   build:
