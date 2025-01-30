@@ -6,7 +6,6 @@ on:
       - main
     paths:
       - '.env'
-  workflow_dispatch:  # This enables manual triggering via the GitHub UI
 
 jobs:
   build:
