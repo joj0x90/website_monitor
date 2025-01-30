@@ -10,14 +10,12 @@ run:
 # builds executable
 build-exec:
         pyinstaller --onefile --noconsole src/main.py
+        cp example.config.json dist/config.json
+        cp .example.env dist/.env 
 
 # builds the executable and packs it together with the config files
 build: build-exec
-        mkdir -p build-pkg
-        cp dist/main build-pkg
-        cp example.config.json build-pkg/config.json
-        cp .example.env build-pkg/.env 
-        tar -czf "{{env_var('APP_NAME')}}_v{{env_var('APP_VERSION')}}.tar.gz" build-pkg
+        tar -czf "{{env_var('APP_NAME')}}_v{{env_var('APP_VERSION')}}.tar.gz" dist/
 
 # removes all build files
 clean:
