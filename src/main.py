@@ -19,7 +19,10 @@ def check_targets(target_list):
                                 target.already_notified = True
                                 target.notification.notify(target.host.url, status)
                         else:
-                                print("already notified user")
+                                print(f"already notified user about {target.host.url}")
+                elif(correct and target.already_notified):
+                        # reset already_notified when target is online again
+                        target.already_notified = False
 
         threading.Timer(wait_seconds, check_targets, args=[target_list]).start()
 

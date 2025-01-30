@@ -4,10 +4,9 @@ on:
   push:
     branches:
       - main
-    # Run on changes to .env or any other relevant files, to detect when the APP_VERSION changes
     paths:
       - '.env'
-    workflow_dispatch: 
+  workflow_dispatch:  # This enables manual triggering via the GitHub UI
 
 jobs:
   build:
@@ -23,17 +22,6 @@ jobs:
         echo "Loading .env"
         cat .env
 
-    - name: Check if APP_VERSION has changed
-      id: version-check
-      run: |
-        # Check if APP_VERSION has changed compared to the last release
-        if [[ "$GITHUB_EVENT_NAME" == "push" ]]; then
-          echo "Checking if APP_VERSION has changed..."
-          git diff --exit-code .env || echo "APP_VERSION might have changed"
-        else
-          echo "No change detected in .env"
-        fi
-
     - name: Build the tar.gz file
       run: |
         # Ensure APP_VERSION exists
@@ -46,8 +34,7 @@ jobs:
         just build
 
     - name: Create a GitHub release
-      if: steps.version-check.outputs.changed == 'true'
-      uses: ghcr.io/softprops/action-gh-release@v1
+      uses: softprops/action-gh-release@v1
       with:
         files: ./${tar_name}
 
@@ -55,4 +42,3 @@ jobs:
       run: |
         # Clean up temporary files if necessary
         echo "Cleaning up..."
-        just clean
