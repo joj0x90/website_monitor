@@ -7,6 +7,7 @@ on:
     # Run on changes to .env or any other relevant files, to detect when the APP_VERSION changes
     paths:
       - '.env'
+    workflow_dispatch: 
 
 jobs:
   build:
