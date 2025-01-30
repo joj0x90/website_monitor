@@ -14,6 +14,7 @@ You just have to adapt the config-file according to your needs. \
 The config file is a basic json-file with following structure: 
 ``` json
 {
+  "refresh": 30,
   "targets": [
     {
       "url": "https://example.com/",
@@ -24,13 +25,13 @@ The config file is a basic json-file with following structure:
     {
       "url": "https://test.example.com/",
       "status": 200,
-      "notification-type": "slack",
-      "method": "<WIP>"
+      "notification-type": "slack"
     }
   ]
 }
 ```
-
+First node is refresh, this sets the time between each poll, dont set it too small, since the servers might block you since it would behave like a DOS-attack.\
+If it is not set, the default is 5 minutes (300 secs). \
 The structure is just a list of targets, which have the following parameters:
 * **url:** the full website's URL
 * **status:** the expected http status code (in case you want to check, if a website returns something other than boring 200)

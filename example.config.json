@@ -1,0 +1,16 @@
+{
+  "refresh": 30,
+  "targets": [
+    {
+      "url": "https://example.com/",
+      "status": 200,
+      "notification-type": "email",
+      "method": "user@company.com"
+    },
+    {
+      "url": "https://test.example.com/",
+      "status": 200,
+      "notification-type": "slack"
+    }
+  ]
+}
