@@ -6,38 +6,60 @@ on:
       - main
     paths:
       - '.env'
+  workflow_dispatch:  # This enables manual triggering via the GitHub UI
 
 jobs:
   build:
     runs-on: ubuntu-latest
     
     steps:
-    - name: Checkout code
-      uses: actions/checkout@v3
+      # Step 1: Checkout the code
+      - name: Checkout code
+        uses: actions/checkout@v3
 
-    - name: Set up .env file for APP_VERSION
-      run: |
-        # Load environment variables from the .env file
-        echo "Loading .env"
-        cat .env
+      # Step 2: Execute "just build" to generate the tar.gz and .env file
+      - name: Build the project
+        run: |
+          just build
 
-    - name: Build the tar.gz file
-      run: |
-        # Ensure APP_VERSION exists
-        if [[ -z "${APP_VERSION}" ]]; then
-          echo "APP_VERSION is not set!"
-          exit 1
-        fi
-        # Build the name for the tar.gz file
-        tar_name="${APP_NAME}_v${APP_VERSION}.tar.gz"
-        just build
+      # Step 3: Read the APP_VERSION from the generated .env file
+      - name: Load new APP_VERSION from .env
+        id: load_version
+        run: |
+          # Check if .env file exists
+          if [ ! -f .env ]; then
+            echo ".env file not found!"
+            exit 1
+          fi
+          
+          # Extract APP_VERSION from .env
+          export APP_VERSION=$(grep "^APP_VERSION=" .env | cut -d '=' -f2)
+          echo "APP_VERSION=$APP_VERSION"
+          echo "APP_VERSION=$APP_VERSION" >> $GITHUB_ENV
 
-    - name: Create a GitHub release
-      uses: softprops/action-gh-release@v1
-      with:
-        files: ./${tar_name}
+      # Step 4: Compare APP_VERSION with previous release
+      - name: Check if APP_VERSION is different from the latest release
+        id: check_version
+        run: |
+          # Fetch the latest release tag
+          latest_release=$(gh release view --json tagName --jq '.tagName' || echo "none")
+          
+          # Log the latest release
+          echo "Latest release tag: $latest_release"
+          
+          # Compare with APP_VERSION
+          if [ "$latest_release" = "v$APP_VERSION" ]; then
+            echo "APP_VERSION has not changed ($APP_VERSION). Skipping release."
+            echo "release_required=false" >> $GITHUB_ENV
+          else
+            echo "APP_VERSION has changed to $APP_VERSION. A new release is required."
+            echo "release_required=true" >> $GITHUB_ENV
 
-    - name: Clean up
-      run: |
-        # Clean up temporary files if necessary
-        echo "Cleaning up..."
+      # Step 5: Conditionally create a new release if APP_VERSION is different
+      - name: Create a new release
+        if: env.release_required == 'true'
+        uses: softprops/action-gh-release@v1
+        with:
+          tag_name: v${{ env.APP_VERSION }}
+          name: Release v${{ env.APP_VERSION }}
+          files: ./*.tar.gz
