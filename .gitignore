@@ -48,3 +48,4 @@ venv.bak/
 
 # config-file
 config.json
+build-pkg/
