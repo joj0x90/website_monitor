@@ -1,7 +1,8 @@
 import smtplib
+import requests
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
-import mailer
+import notifier
 import socket
 from dotenv import load_dotenv
 import os
@@ -11,7 +12,7 @@ class notifications:
                 # Load the .env file
                 load_dotenv()
 
-                if notification_type != '' and method != '':
+                if notification_type != '':
                         self.notifyMe = True
                         self.notifier = notifier
                         self.notification_type = notification_type
@@ -21,19 +22,44 @@ class notifications:
                         self.notifier = ''
                         self.notification_type = ''
                         self.method = ''
+
+        def print(self):
+                print("+" * 30)
+                print(f"notifyMe: {self.notifyMe}")
+                print(f"Notifier: {self.notifier}")
+                print(f"notification_type: {self.notification_type}")
+                print(f"method: {self.method}")
+                print("+" * 30)
         
         def notify(self, url, actual_output):
                 if self.notifyMe:
                         if self.notification_type == 'email':
                                 self.sendMail(url, actual_output)
                         elif self.notification_type == 'slack':
-                                self.sendSlackNotification()
+                                self.sendSlackNotification(url, actual_output)
                         else:
                                 print("error while trying to notify using: " + self.notification_type + " with: " + self.method) 
 
-        def sendSlackNotification(self):
-                # prototype function for sending slack notifications
-                return
+        def sendSlackNotification(self, url, status):
+                App_name = os.getenv("APP_NAME", "Website-monitor")
+                App_version = os.getenv("APP_VERSION", "0.1")
+                slack_webhook = os.getenv("SLACK_WEBHOOK", "")
+
+                slack_data = {
+                        "text": "[" + App_name + " v" + App_version + "] The Service at " + url + " has an unexpected http-status: " + str(status)
+                }
+
+                # Send the POST request
+                response = requests.post(
+                        slack_webhook, json=slack_data,
+                        headers={'Content-Type': 'application/json'}
+                )
+
+                # Check the response
+                if response.status_code == 200:
+                        print("Slack Notification sent successfully!")
+                else:
+                        print(f"Failed to send notification: {response.status_code}, {response.text}")
         
         def is_ssl_port(self, smtp_server, port):
                 try:
@@ -81,13 +107,13 @@ class notifications:
                                 with smtplib.SMTP_SSL(smtp_server, smtp_port, timeout=30) as server:
                                         server.login(self.notifier.user, self.notifier.password)
                                         server.sendmail(sender_email, receiver_email, message.as_string())
-                                        print("ssl encrypted notification send to: " + receiver_email)
+                                        print("ssl encrypted email notification send to: " + receiver_email)
                         else:
                                 with smtplib.SMTP(smtp_server, smtp_port) as server:
                                         server.starttls()
                                         server.login(self.notifier.user, self.notifier.password)
                                         server.sendmail(sender_email, receiver_email, message.as_string())
-                                        print("notification send to: " + receiver_email)
+                                        print("email notification send to: " + receiver_email)
                 except (smtplib.SMTPException, socket.timeout) as e:
                         print(f"Failed to send email: {e}")
 
