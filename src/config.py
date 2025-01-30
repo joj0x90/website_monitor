@@ -11,7 +11,9 @@ def parse(file_path):
         with open(file_path, 'r') as file:
                 data = json.load(file)
 
-                wait_time = data['refresh']
+                wait_time = 300
+                if 'refresh' in data:
+                        wait_time = data['refresh']                       
 
                 targets = []
                 # iterate over json structure 
