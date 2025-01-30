@@ -13,7 +13,7 @@ jobs:
     runs-on: ubuntu-latest
     
     steps:
-      # Step 1: Install necessary software components
+      # Install necessary software components
       - name: Install required software
         run: |
           echo "Installing necessary tools..."
@@ -39,16 +39,23 @@ jobs:
           echo "APP_NAME=Website-Monitor" >> $GITHUB_ENV
           echo "APP_VERSION=0.1" >> $GITHUB_ENV
 
-      # Step 2: Checkout the code
+      # Set up GitHub CLI authentication
+      - name: Configure GitHub CLI authentication
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          echo "GitHub CLI authenticated successfully."
+
+      # Checkout the code
       - name: Checkout code
         uses: actions/checkout@v3
 
-      # Step 3: Execute "just build" to generate the tar.gz and .env file in dist/ directory
+      # Execute "just build" to generate the tar.gz and .env file in dist/ directory
       - name: Build the project
         run: |
           just build
 
-      # Step 4: Read the APP_VERSION from the generated .env file
+      # Read the APP_VERSION from the generated .env file
       - name: Load new APP_VERSION from dist/.env
         id: load_version
         run: |
@@ -63,8 +70,10 @@ jobs:
           echo "APP_VERSION=$APP_VERSION"
           echo "APP_VERSION=$APP_VERSION" >> $GITHUB_ENV
 
-      # Step 5: Compare APP_VERSION with previous release
+      # Compare APP_VERSION with previous release
       - name: Check if APP_VERSION is different from the latest release
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         id: check_version
         run: |
           # Fetch the latest release tag
@@ -81,10 +90,12 @@ jobs:
             echo "APP_VERSION has changed to $APP_VERSION. A new release is required."
             echo "release_required=true" >> $GITHUB_ENV
 
-      # Step 6: Conditionally create a new release if APP_VERSION is different
+      # Conditionally create a new release if APP_VERSION is different
       - name: Create a new release
         if: env.release_required == 'true'
         uses: softprops/action-gh-release@v1
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           tag_name: v${{ env.APP_VERSION }}
           name: Release v${{ env.APP_VERSION }}
