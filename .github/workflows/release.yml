@@ -89,6 +89,7 @@ jobs:
           else
             echo "APP_VERSION has changed to $APP_VERSION. A new release is required."
             echo "release_required=true" >> $GITHUB_ENV
+          fi
 
       # Conditionally create a new release if APP_VERSION is different
       - name: Create a new release
