@@ -46,6 +46,9 @@ MAIL_USER="<user>"
 MAIL_PASSWORD="<password>"
 MAIL_SERVER="mail.server.com"
 SMTP_PORT=1234
+
+# Slack-configuration
+SLACK_WEBHOOK="https://hooks.slack.com/services/<Webhook>"
 ```
 this specifies some basic App-data and the smtp-mail account used for sending email-notifications:
 * **mail_address:** your mail-address (will be shown as sender in the mail)

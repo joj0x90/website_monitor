@@ -24,6 +24,6 @@ def check_targets(target_list):
         threading.Timer(wait_seconds, check_targets, args=[target_list]).start()
 
 if __name__ == "__main__":
-        target_list = config.parse("config.json")
+        [wait_seconds, target_list] = config.parse("config.json")
     
         check_targets(target_list)
