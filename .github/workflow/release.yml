@@ -1,0 +1,57 @@
+name: Build and Release
+
+on:
+  push:
+    branches:
+      - main
+    # Run on changes to .env or any other relevant files, to detect when the APP_VERSION changes
+    paths:
+      - '.env'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+
+    - name: Set up .env file for APP_VERSION
+      run: |
+        # Load environment variables from the .env file
+        echo "Loading .env"
+        cat .env
+
+    - name: Check if APP_VERSION has changed
+      id: version-check
+      run: |
+        # Check if APP_VERSION has changed compared to the last release
+        if [[ "$GITHUB_EVENT_NAME" == "push" ]]; then
+          echo "Checking if APP_VERSION has changed..."
+          git diff --exit-code .env || echo "APP_VERSION might have changed"
+        else
+          echo "No change detected in .env"
+        fi
+
+    - name: Build the tar.gz file
+      run: |
+        # Ensure APP_VERSION exists
+        if [[ -z "${APP_VERSION}" ]]; then
+          echo "APP_VERSION is not set!"
+          exit 1
+        fi
+        # Build the name for the tar.gz file
+        tar_name="${APP_NAME}_v${APP_VERSION}.tar.gz"
+        just build
+
+    - name: Create a GitHub release
+      if: steps.version-check.outputs.changed == 'true'
+      uses: ghcr.io/softprops/action-gh-release@v1
+      with:
+        files: ./${tar_name}
+
+    - name: Clean up
+      run: |
+        # Clean up temporary files if necessary
+        echo "Cleaning up..."
+        just clean
