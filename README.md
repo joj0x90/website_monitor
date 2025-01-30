@@ -6,6 +6,7 @@ Additionally you can specify a notification per email or slack for any website, 
 ## used python-packages
 You have to install the following packages, to run the application:
 * requests ```pip install requests```
+* pyinstaller ```pip install pyinstaller``` (for building an executable)
 
 ## Config-file
 You just have to adapt the config-file according to your needs. \
@@ -56,6 +57,15 @@ this specifies some basic App-data and the smtp-mail account used for sending em
 * **mail_pass:** The password for your mail_user
 * **mail_server:** Your mail-server's outgoing smtp address
 * **mail_port:** the mail-server's smtp port (currently only unencrypted) 
+
+### Slack-configuration
+To configure your slack webhook, go to this [site](https://api.slack.com/messaging/webhooks), create a new App and give it the webhook feature, copy the webhook url and create a new channel in your slack workspace. \
+You can then select this channel, so that every message over this webhook arrives in this channel.
+
+## Building
+You can manage the build step using a Justfile.
+```just run``` will run the programm locally
+```just build``` will build an executable in dist/main
 
 ## Further development
 I would really like to add a webserver with a simple GUI possibly using flask, to make it easier to manage the config file and see, which targets are currently in which state. \
