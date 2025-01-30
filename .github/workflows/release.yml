@@ -43,23 +43,23 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
 
-      # Step 3: Execute "just build" to generate the tar.gz and .env file
+      # Step 3: Execute "just build" to generate the tar.gz and .env file in dist/ directory
       - name: Build the project
         run: |
           just build
 
       # Step 4: Read the APP_VERSION from the generated .env file
-      - name: Load new APP_VERSION from .env
+      - name: Load new APP_VERSION from dist/.env
         id: load_version
         run: |
-          # Check if .env file exists
-          if [ ! -f .env ]; then
-            echo ".env file not found!"
+          # Check if dist/.env file exists
+          if [ ! -f dist/.env ]; then
+            echo "dist/.env file not found!"
             exit 1
           fi
           
-          # Extract APP_VERSION from .env
-          export APP_VERSION=$(grep "^APP_VERSION=" .env | cut -d '=' -f2)
+          # Extract APP_VERSION from dist/.env
+          export APP_VERSION=$(grep "^APP_VERSION=" dist/.env | cut -d '=' -f2)
           echo "APP_VERSION=$APP_VERSION"
           echo "APP_VERSION=$APP_VERSION" >> $GITHUB_ENV
 
