@@ -67,7 +67,8 @@ You can then select this channel, so that every message over this webhook arrive
 ## Building
 You can manage the build step using a Justfile.
 ```just run``` will run the programm locally
-```just build``` will build an executable in dist/main
+```just build-exec``` will build an executable in dist/main 
+```just build``` will package the executable together with the example config files. 
 
 ## Further development
 I would really like to add a webserver with a simple GUI possibly using flask, to make it easier to manage the config file and see, which targets are currently in which state. \
