@@ -18,7 +18,11 @@ jobs:
         run: |
           echo "Installing necessary tools..."
           sudo apt-get update
-          sudo apt-get install -y tar build-essential curl
+          sudo apt-get install -y tar build-essential curl 
+          python -m ensurepip --upgrade
+          pip install requests
+          pip install python-dotenv
+          pip install pyinstaller
           
           # Install Just (if not already available)
           if ! command -v just &> /dev/null; then
