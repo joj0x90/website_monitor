@@ -2,10 +2,12 @@ import smtplib
 import requests
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
-import notifier
 import socket
 from dotenv import load_dotenv
 import os
+
+import notifier
+import config
 
 class notifications:
         def __init__(self, notifier = '', notification_type = '', method = ''):
@@ -24,12 +26,13 @@ class notifications:
                         self.method = ''
 
         def print(self):
-                print("+" * 30)
-                print(f"notifyMe: {self.notifyMe}")
-                print(f"Notifier: {self.notifier}")
-                print(f"notification_type: {self.notification_type}")
-                print(f"method: {self.method}")
-                print("+" * 30)
+                if config.GLOBAL_VERBOSE:
+                        print("+" * 30)
+                        print(f"notifyMe: {self.notifyMe}")
+                        print(f"Notifier: {self.notifier}")
+                        print(f"notification_type: {self.notification_type}")
+                        print(f"method: {self.method}")
+                        print("+" * 30)
         
         def notify(self, url, actual_output):
                 if self.notifyMe:
@@ -38,7 +41,8 @@ class notifications:
                         elif self.notification_type == 'slack':
                                 self.sendSlackNotification(url, actual_output)
                         else:
-                                print("error while trying to notify using: " + self.notification_type + " with: " + self.method) 
+                                if config.GLOBAL_VERBOSE:
+                                        print("error while trying to notify using: " + self.notification_type + " with: " + self.method) 
 
         def sendSlackNotification(self, url, status):
                 App_name = os.getenv("APP_NAME", "Website-monitor")
@@ -56,10 +60,11 @@ class notifications:
                 )
 
                 # Check the response
-                if response.status_code == 200:
-                        print("Slack Notification sent successfully!")
-                else:
-                        print(f"Failed to send notification: {response.status_code}, {response.text}")
+                if config.GLOBAL_VERBOSE:
+                        if response.status_code == 200:
+                                print("Slack Notification sent successfully!")
+                        else:
+                                print(f"Failed to send notification: {response.status_code}, {response.text}")
         
         def is_ssl_port(self, smtp_server, port):
                 try:
@@ -107,13 +112,16 @@ class notifications:
                                 with smtplib.SMTP_SSL(smtp_server, smtp_port, timeout=30) as server:
                                         server.login(self.notifier.user, self.notifier.password)
                                         server.sendmail(sender_email, receiver_email, message.as_string())
-                                        print("ssl encrypted email notification send to: " + receiver_email)
+                                        if config.GLOBAL_VERBOSE:
+                                                print("ssl encrypted email notification send to: " + receiver_email)
                         else:
                                 with smtplib.SMTP(smtp_server, smtp_port) as server:
                                         server.starttls()
                                         server.login(self.notifier.user, self.notifier.password)
                                         server.sendmail(sender_email, receiver_email, message.as_string())
-                                        print("email notification send to: " + receiver_email)
+                                        if config.GLOBAL_VERBOSE:
+                                                print("email notification send to: " + receiver_email)
                 except (smtplib.SMTPException, socket.timeout) as e:
-                        print(f"Failed to send email: {e}")
+                        if config.GLOBAL_VERBOSE:
+                                print(f"Failed to send email: {e}")
 

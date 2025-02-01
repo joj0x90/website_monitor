@@ -1,6 +1,6 @@
 import requests
 
-import notification
+import config
 
 class host:
         def __init__(self, url, expected_status):
@@ -21,9 +21,10 @@ class target:
                         return [False, None]
 
         def print_target(self):
-                print("-" * 30)
-                print(f"Host: {self.host.url}")
-                print(f"Notification Type: {self.notification.notification_type}")
-                print(f"Method: {self.notification.method}")
-                print(f"Expected Status: {self.host.expected_status}")
-                print("-" * 30)
+                if config.GLOBAL_VERBOSE:
+                        print("-" * 30)
+                        print(f"Host: {self.host.url}")
+                        print(f"Notification Type: {self.notification.notification_type}")
+                        print(f"Method: {self.notification.method}")
+                        print(f"Expected Status: {self.host.expected_status}")
+                        print("-" * 30)

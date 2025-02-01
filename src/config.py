@@ -5,6 +5,9 @@ import target
 import notifier
 import notification
 
+# defines, if debug info should be printed
+GLOBAL_VERBOSE = False
+
 def parse(file_path):
         notifier = parse_notifier()
 
@@ -48,5 +51,7 @@ def parse_notifier():
                 port=os.getenv("SMTP_PORT", 0),
                 webhook=os.getenv("SLACK_WEBHOOK", "")
         )
+        global GLOBAL_VERBOSE
+        GLOBAL_VERBOSE = os.getenv("APP_DEBUG", "false") == "true"
 
         return mail_sender_obj

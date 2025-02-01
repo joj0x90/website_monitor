@@ -43,6 +43,9 @@ App-specifics are managed using a .env file, which is structured like this:
 APP_NAME="Website-Monitor"
 APP_VERSION="0.1"
 
+# Flag for printing debug statements: false | true
+APP_DEBUG="true"
+
 # smtp email server
 MAIL_ADDRESS="noreply@domain.com"
 MAIL_USER="<user>"
