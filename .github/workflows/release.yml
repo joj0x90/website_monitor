@@ -53,7 +53,7 @@ jobs:
       # Execute "just build" to generate the tar.gz and .env file in dist/ directory
       - name: Build the project
         run: |
-          just build
+          just build-targz
 
       # Read the APP_VERSION from the generated .env file
       - name: Load new APP_VERSION from dist/.env
