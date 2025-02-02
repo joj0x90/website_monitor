@@ -35,7 +35,7 @@ if __name__ == "__main__":
 
         [wait_seconds, target_list] = config.parse("config.json")
         if config.GLOBAL_VERBOSE:
-                print(f"starting Website-Monitor {os.environ.get("APP_VERSION", "0.x")} ")
+                print(f"starting Website-Monitor {os.environ.get("APP_VERSION", "0.1")} ")
                 print(f"refresh every {wait_seconds} seconds")
     
         check_targets(target_list)
