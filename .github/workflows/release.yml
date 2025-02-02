@@ -37,7 +37,7 @@ jobs:
 
           echo "temporarily setting fake env-vars"
           echo "APP_NAME=Website-Monitor" >> $GITHUB_ENV
-          echo "APP_VERSION=0.1" >> $GITHUB_ENV
+          echo "APP_VERSION=$(cat version.txt)" >> $GITHUB_ENV
 
       # Set up GitHub CLI authentication
       - name: Configure GitHub CLI authentication
@@ -59,17 +59,17 @@ jobs:
           just build-targz
 
       # Read the APP_VERSION from the generated .env file
-      - name: Load new APP_VERSION from dist/.env
+      - name: Load new APP_VERSION
         id: load_version
         run: |
-          # Check if dist/.env file exists
-          if [ ! -f dist/.env ]; then
-            echo "dist/.env file not found!"
+          # Check if version_file file exists
+          if [ ! -f version_file ]; then
+            echo "vesion_file file not found!"
             exit 1
           fi
           
-          # Extract APP_VERSION from dist/.env
-          export APP_VERSION=$(grep "^APP_VERSION=" dist/.env | cut -d '=' -f2)
+          # Extract APP_VERSION from version_file
+          export APP_VERSION=VERSION=$(cat {{VERSION_FILE}})
           echo "APP_VERSION=$APP_VERSION"
           echo "APP_VERSION=$APP_VERSION" >> $GITHUB_ENV
 

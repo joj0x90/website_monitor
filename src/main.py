@@ -1,5 +1,5 @@
 import requests
-import time, threading
+import time, threading, os
 
 import config
 import target
@@ -26,9 +26,16 @@ def check_targets(target_list):
         threading.Timer(wait_seconds, check_targets, args=[target_list]).start()
 
 if __name__ == "__main__":
+        # Read the version string from the version_file
+        with open("version_file", "r") as file:
+                version = file.read().strip()
+
+        # Set the environment variable (optional, if needed)
+        os.environ["APP_VERSION"] = version
+
         [wait_seconds, target_list] = config.parse("config.json")
         if config.GLOBAL_VERBOSE:
-                print("starting Website-Monitor")
+                print(f"starting Website-Monitor {os.environ.get("APP_VERSION", "0.x")} ")
                 print(f"refresh every {wait_seconds} seconds")
     
         check_targets(target_list)

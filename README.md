@@ -41,7 +41,6 @@ The structure is just a list of targets, which have the following parameters:
 App-specifics are managed using a .env file, which is structured like this:
 ``` .env
 APP_NAME="Website-Monitor"
-APP_VERSION="0.1"
 
 # Flag for printing debug statements: false | true
 APP_DEBUG="true"
