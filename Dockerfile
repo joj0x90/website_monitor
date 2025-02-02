@@ -22,6 +22,7 @@ WORKDIR /app
 COPY --from=builder /app/dist/main .
 COPY .env .
 COPY config.json .
+COPY version_file .
 
 RUN chmod +x main
 
