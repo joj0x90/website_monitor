@@ -80,7 +80,7 @@ jobs:
         id: check_version
         run: |
           # Fetch the latest release tag
-          latest_release=$(gh release view --json tagName --jq '.tagName' || echo "none")
+          latest_release=$(gh release view --json tagName --jq '.tagName' --prerelease || echo "none")
           
           # Log the latest release
           echo "Latest release tag: $latest_release"
