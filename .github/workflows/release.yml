@@ -101,6 +101,6 @@ jobs:
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          tag_name: v${{ env.APP_VERSION }}
-          name: Release v${{ env.APP_VERSION }}
+          tag_name: v$APP_VERSION
+          name: Release v$APP_VERSION
           files: ./*.tar.gz
