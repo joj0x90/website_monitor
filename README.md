@@ -55,6 +55,10 @@ SMTP_PORT=1234
 
 # Slack-configuration
 SLACK_WEBHOOK="https://hooks.slack.com/services/<Webhook>"
+
+# for publishing the docker-mage
+DOCKER_USERNAME="<docker-username>"
+DOCKER_TOKEN="<docker PAT>"
 ```
 this specifies some basic App-data and the smtp-mail account used for sending email-notifications:
 * **mail_address:** your mail-address (will be shown as sender in the mail)
@@ -69,9 +73,12 @@ You can then select this channel, so that every message over this webhook arrive
 
 ## Building
 You can manage the build step using a Justfile.
-```just run``` will run the programm locally
-```just build-exec``` will build an executable in dist/main 
-```just build``` will package the executable together with the example config files. 
+* ```just run``` will run the programm locally
+* ```just build-exec-locally``` will build an executable in dist/main
+* ```just build-targz``` will package the executable together with the example config and .env-files as one *.tar.gz file
+* ```just build-images``` will build the docker images for the current version (set in .env-file) and latest but wont push it to your docker account (specify docker-credentials in .env-file)
+* ```just publish-current-image``` will push the image with the current version number to your docker repository
+* ```just publish-latest-image``` will push the image with the tag "latest" to your defined docker repository
 
 ## Further development
 I would really like to add a webserver with a simple GUI possibly using flask, to make it easier to manage the config file and see, which targets are currently in which state. \
