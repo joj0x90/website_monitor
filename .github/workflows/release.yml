@@ -93,15 +93,6 @@ jobs:
             echo "APP_VERSION has changed to $APP_VERSION. A new release is required."
             echo "release_required=true" >> $GITHUB_ENV
           fi
-      
-      # upload changes to docker repo
-      - name: upload docker images
-        if: env.release_required == 'true'
-        env:
-          DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
-          DOCKER_TOKEN: ${{ secrets.DOCKER_TOKEN }}
-        run: | 
-          just publish-current-image && just publish-latest-image
 
       # Conditionally create a new release if APP_VERSION is different
       - name: Create a new release
