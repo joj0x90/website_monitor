@@ -52,6 +52,9 @@ jobs:
 
       # Execute "just build" to generate the tar.gz and .env file in dist/ directory
       - name: Build the project
+        env:
+          DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
+          DOCKER_TOKEN: ${{ secrets.DOCKER_TOKEN }}
         run: |
           just build-targz
 
@@ -94,6 +97,9 @@ jobs:
       # upload changes to docker repo
       - name: upload docker images
         if: env.release_required == 'true'
+        env:
+          DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
+          DOCKER_TOKEN: ${{ secrets.DOCKER_TOKEN }}
         run: | 
           just publish-current-image && just publish-latest-image
 
