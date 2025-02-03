@@ -92,7 +92,7 @@ class notifications:
                 App_version = os.getenv("APP_VERSION", "0.1")
 
                 subject = "[" + App_name + "]: Your service is down!"
-                body = "The Service under: " + url + " is currently unavailable!\nthe returned http-status-code is: " +  str(status) + ")\n\n"
+                body = "The Service under: " + url + " is currently unavailable!\nthe returned http-status-code is: " +  str(status) + "\n\n"
                 body += "This Service was provided by {App_name} v{App_version}"
 
                 # Create MIME object
