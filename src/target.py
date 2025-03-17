@@ -16,7 +16,7 @@ class target:
         def check_status(self):
                 try:
                         response = requests.get(self.host.url)
-                        return [(response.status_code == self.host.expected_status), response.status_code]
+                        return [(response.status_code == self.host.expected_status and response.status_code != None), response.status_code]
                 except requests.exceptions.RequestException:
                         return [False, None]
 
